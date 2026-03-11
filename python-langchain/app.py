@@ -18,9 +18,9 @@ class State(TypedDict):
     messages: Annotated[list, add_messages]
 
 # Global variable for the researcher agent (will be set in main)
-researcher_agent = None
-writer_agent = None
-editor_agent = None
+#researcher_agent = None
+#writer_agent = None
+#editor_agent = None
 
 async def researcher_node(state: State) -> Command[Literal["writer", "__end__"]]:
     """Research node that hands off to writer."""
@@ -219,7 +219,7 @@ async def main():
     print("Starting Multi-Agent Content Creation Workflow")
     print("="*50 + "\n")
     
-    user_input = input("latest developments in quantum computing")
+    user_input = input("Enter the topic that you would like to research:")
     initial_message = HumanMessage(content=user_input)
     result = await graph.ainvoke({"messages": [initial_message]})
     
