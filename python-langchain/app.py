@@ -65,23 +65,7 @@ async def writer_node(state: State) -> Command[Literal["editor", "__end__"]]:
     print("WRITER NODE")
     print("="*50)
     
-    # Extract research findings from the message history for clarity
-    research_findings = ""
-    for msg in state["messages"]:
-        if msg.type == "ai" and not hasattr(msg, 'tool_calls'):
-            research_findings = msg.content
-            break
-    
-    if not research_findings:
-        research_findings = "No research findings were extracted from the previous messages."
-    
-    # Create a message that explicitly provides the research context
-    from langchain_core.messages import SystemMessage
-    enhanced_messages = [
-        SystemMessage(content=f"Here are the research findings you should base your writing on:\n\n{research_findings}\n\nNow, write engaging content based on these findings.")
-    ] + state["messages"]
-    
-    response = await writer_agent.ainvoke({"messages": enhanced_messages})
+    response = await writer_agent.ainvoke({"messages": state["messages"]})
     
     # Print the written content
     final_message = response["messages"][-1]
@@ -89,12 +73,9 @@ async def writer_node(state: State) -> Command[Literal["editor", "__end__"]]:
     print(f"{final_message.content}")
     print("\n" + "="*50 + "\n")
     
-    # Update messages with the writer's output (use original messages + writer response)
-    final_messages = state["messages"] + [response["messages"][-1]]
-    
     # Native handoff: explicitly tell the graph to move to 'editor'
     return Command(
-        update={"messages": final_messages},
+        update={"messages": response["messages"]},
         goto="editor"
     )
 
