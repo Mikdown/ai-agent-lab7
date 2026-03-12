@@ -155,7 +155,7 @@ async def main():
     # Create MCP client for Tavily
     research_client = MultiServerMCPClient({
         "tavily": {
-            "transport": "http",
+            "transport": "streamable_http",
             "url": f"https://mcp.tavily.com/mcp/?tavilyApiKey={tavily_api_key}",
         }
     })
